@@ -1,0 +1,30 @@
+# xalloc
+
+Dynamic suballocators for external memory (e.g., Vulkan device memory).
+
+## Examples
+
+```rust
+let mut tlsf = xalloc::SysTlsf::new(8u32);
+
+// Allocate regions
+let (region1, offset1) = tlsf.alloc(4).unwrap();
+let (region2, offset2) = tlsf.alloc(4).unwrap();
+println!("allocated #1: {:?}", (&region1, offset1));
+println!("allocated #2: {:?}", (&region2, offset2));
+
+// Deallocate a region
+tlsf.dealloc(region1).unwrap();
+
+// Now we can allocate again
+tlsf.alloc(2).unwrap();
+tlsf.alloc(2).unwrap();
+```
+
+## Feature Flags
+
+- `nightly` — Enables optimizations which currently require a Nightly Rust
+  compiler.
+
+
+License: MIT
