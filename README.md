@@ -1,5 +1,7 @@
 # xalloc
 
+[<img src="https://docs.rs/xalloc/badge.svg" alt="docs.rs">](https://docs.rs/tokenlock/)
+
 Dynamic suballocators for external memory (e.g., Vulkan device memory).
 
 ## Examples
