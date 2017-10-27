@@ -8,7 +8,7 @@ repository = "https://github.com/yvt/xalloc-rs"
 description = """
 Suballocators for external memory (e.g., Vulkan device memory)
 """
-keywords = ["allocator", "vulkan", "memory", "suballocator"]
+keywords = ["allocator", "vulkan", "memory", "suballocator", "tlsf"]
 
 [features]
 nightly = []
