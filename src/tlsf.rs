@@ -132,7 +132,9 @@ where
 
 use arena;
 
-/// `Tlsf` that uses `CheckedArena`.
+/// `Tlsf` that uses `CheckedArena` for rigorous memory safety check.
+///
+/// It is really slow. Use `SysTlsf` in a production code.
 ///
 /// ## Type parameter
 ///
