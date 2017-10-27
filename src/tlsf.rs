@@ -630,7 +630,7 @@ where
     /// undefined behavior.
     pub fn dealloc_relaxed(&mut self, r: TlsfSuballocRegion<P>) {
         unsafe {
-            self.blocks.contains_unchecked(&r.0)
+            self.dealloc_unchecked(r)
         }
     }
 }
