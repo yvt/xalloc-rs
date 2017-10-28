@@ -20,6 +20,15 @@ pub trait BinaryInteger
     + ops::SubAssign
     + ops::MulAssign
     + ops::DivAssign
+    + ops::BitOrAssign
+    + ops::BitAndAssign
+    + ops::BitXorAssign
+    + ops::BitOr<Self, Output = Self>
+    + ops::BitAnd<Self, Output = Self>
+    + ops::BitXor<Self, Output = Self>
+    + ops::Shl<u32, Output = Self>
+    + ops::Shr<u32, Output = Self>
+    + ops::Not<Output = Self>
     + RefSaturatingAdd<Output = Self>
     + fmt::Debug {
     type OneDigits: Iterator<Item = u32>;

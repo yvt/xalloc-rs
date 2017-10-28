@@ -8,6 +8,15 @@
 //
 //! Dynamic suballocators for external memory (e.g., Vulkan device memory).
 //!
+//! # Provided Algorithms
+//!
+//! |               Name              | Time Complexity | Space Complexity |
+//! | ------------------------------- | --------------- | ---------------- |
+//! | TLSF (Two-Level Segregated Fit) | `O(1)`          | `O(N)`           |
+//! | Free space bitmap               | `O(size)`       | `O(size)`        |
+//!
+//! (`size`: heap size measured by the number of allocation units, `N`: number of allocations)
+//!
 //! # Examples
 //!
 //! ```
@@ -37,7 +46,10 @@ pub extern crate num_traits;
 pub extern crate num_integer;
 
 pub mod arena;
+pub mod bitmap;
+mod bitmaputils;
 pub mod tlsf;
 pub mod int;
 
 pub use self::tlsf::{Tlsf, SafeTlsf, SysTlsf, TlsfBlock};
+pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
