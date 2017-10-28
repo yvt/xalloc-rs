@@ -4,6 +4,15 @@
 
 Dynamic suballocators for external memory (e.g., Vulkan device memory).
 
+## Provided Algorithms
+
+|               Name              | Time Complexity | Space Complexity |
+| ------------------------------- | --------------- | ---------------- |
+| TLSF (Two-Level Segregated Fit) | `O(1)`          | `O(N)`           |
+| Free space bitmap               | `O(size)`       | `O(size)`        |
+
+(`size`: heap size measured by the number of allocation units, `N`: number of allocations)
+
 ## Examples
 
 ```rust
