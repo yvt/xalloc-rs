@@ -51,5 +51,5 @@ mod bitmaputils;
 pub mod tlsf;
 pub mod int;
 
-pub use self::tlsf::{Tlsf, SafeTlsf, SysTlsf, TlsfBlock};
+pub use self::tlsf::{Tlsf, SafeTlsf, SysTlsf, TlsfBlock, TlsfRegion};
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};

@@ -6,7 +6,7 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
-//! A dynamic external memory suballocator based on the TLSF (Two-Level Segregated Fit)
+//! A dynamic external memory allocator based on the TLSF (Two-Level Segregated Fit)
 //! algorithm[^1].
 //!
 //! [^1]: Masmano, Miguel, et al. "TLSF: A new dynamic memory allocator for real-time systems."
@@ -107,7 +107,7 @@ type TlsfL2Bitmap = u16;
 const LOG2_L2_SIZE: u32 = 4; // must be <= log2(sizeof(TlsfL2Bitmap)*8)
 const L2_SIZE: u32 = 1 << LOG2_L2_SIZE;
 
-/// TLSF-based external memory suballocator.
+/// TLSF-based external memory allocator.
 ///
 /// See [the module-level documentation] for more.
 ///
@@ -163,7 +163,11 @@ impl<T: BinaryUInteger> SafeTlsf<T> {
 ///
 pub type SysTlsf<T> = Tlsf<
     T,
-    arena::PooledArena<TlsfBlock<T, arena::sys::Ptr>, arena::SysAllocator, arena::sys::Ptr>,
+    arena::PooledArena<
+        TlsfBlock<T, arena::sys::Ptr>,
+        arena::SysAllocator,
+        arena::sys::Ptr,
+    >,
     arena::sys::Ptr,
 >;
 
@@ -184,10 +188,10 @@ impl<T: BinaryUInteger> SysTlsf<T> {
 
 /// A handle type to a region allocated in a `Tlsf`.
 ///
-/// `TlsfSuballocRegion` returned by a `Tlsf` only can be used with the
+/// `TlsfRegion` returned by a `Tlsf` only can be used with the
 /// same `Tlsf`.
 #[derive(Debug, PartialEq, Eq, Hash)]
-pub struct TlsfSuballocRegion<P>(P);
+pub struct TlsfRegion<P>(P);
 
 /// Internal data structure used by `Tlsf` that represents a free/occpied memory block.
 #[derive(Debug)]
@@ -322,7 +326,7 @@ where
     ///
     /// - `align` must be a power of two.
     /// - `size` must not be zero.
-    pub fn alloc_aligned(&mut self, size: T, align: T) -> Option<(TlsfSuballocRegion<P>, T)> {
+    pub fn alloc_aligned(&mut self, size: T, align: T) -> Option<(TlsfRegion<P>, T)> {
         assert!(align.is_power_of_two());
         self.allocate_aligned_log2(size, align.trailing_zeros())
     }
@@ -333,15 +337,11 @@ where
     /// allocation succeeds. Returns `None` otherwise.
     ///
     /// `size` must not be zero.
-    pub fn alloc(&mut self, size: T) -> Option<(TlsfSuballocRegion<P>, T)> {
+    pub fn alloc(&mut self, size: T) -> Option<(TlsfRegion<P>, T)> {
         self.allocate_aligned_log2(size, 0)
     }
 
-    fn allocate_aligned_log2(
-        &mut self,
-        size: T,
-        align_bits: u32,
-    ) -> Option<(TlsfSuballocRegion<P>, T)> {
+    fn allocate_aligned_log2(&mut self, size: T, align_bits: u32) -> Option<(TlsfRegion<P>, T)> {
         if size > self.size {
             return None;
         }
@@ -432,16 +432,16 @@ where
             }
 
 
-            (TlsfSuballocRegion(main_ptr), address)
+            (TlsfRegion(main_ptr), address)
         })
     }
 
     /// Deallocate the specified region, without checking the origin of the
-    /// `TlsfSuballocRegion`.
+    /// `TlsfRegion`.
     ///
     /// This might result in an undefined behavior if `r` originates from
     /// a different instance of `Tlsf`.
-    pub unsafe fn dealloc_unchecked(&mut self, r: TlsfSuballocRegion<P>) {
+    pub unsafe fn dealloc_unchecked(&mut self, r: TlsfRegion<P>) {
         let block_ptr = r.0;
 
         let (prev_ptr, next_ptr) = {
@@ -510,7 +510,7 @@ where
     }
 
     #[doc(hidden)]
-    pub unsafe fn test_integrity(&mut self, root_ptr: &TlsfSuballocRegion<P>)
+    pub unsafe fn test_integrity(&mut self, root_ptr: &TlsfRegion<P>)
     where
         P: fmt::Debug + PartialEq,
     {
@@ -605,7 +605,7 @@ where
     /// Deallocate the specified region.
     ///
     /// Returns `Err(r)` if `r` does not originate from the same instance of `Tlsf`.
-    pub fn dealloc(&mut self, r: TlsfSuballocRegion<P>) -> Result<(), TlsfSuballocRegion<P>> {
+    pub fn dealloc(&mut self, r: TlsfRegion<P>) -> Result<(), TlsfRegion<P>> {
         unsafe {
             if self.blocks.contains_unchecked(&r.0) {
                 Ok(self.dealloc_unchecked(r))
@@ -619,8 +619,7 @@ where
 impl<T, P, A> Tlsf<T, A, P>
 where
     T: BinaryUInteger,
-    A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>
-        + SafeArena<TlsfBlock<T, P>>,
+    A: UnsafeArena<TlsfBlock<T, P>, Ptr = P> + SafeArena<TlsfBlock<T, P>>,
     P: Clone + Default + PartialEq + Eq + fmt::Debug,
 {
     /// Deallocate the specified region.
@@ -628,10 +627,8 @@ where
     /// `r` must originate from the same instance of `Tlsf`. Otherwise, `Tlsf`
     /// enters an inconsistent state and possibly panics, but does not cause an
     /// undefined behavior.
-    pub fn dealloc_relaxed(&mut self, r: TlsfSuballocRegion<P>) {
-        unsafe {
-            self.dealloc_unchecked(r)
-        }
+    pub fn dealloc_relaxed(&mut self, r: TlsfRegion<P>) {
+        unsafe { self.dealloc_unchecked(r) }
     }
 }
 

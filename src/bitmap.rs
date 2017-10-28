@@ -6,7 +6,7 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
-//! Free space bitmap-based dynamic suballocator.
+//! Free space bitmap-based external memory allocator.
 //!
 //! This allocator uses a simple bitmap to track the allocation state, and
 //! relies on a naïve bit scan for allocation.
@@ -24,8 +24,8 @@
 //! just one allocation unit).
 //!
 //! The following table shows the memory overhead comparison between `Tlsf` and
-//! `BitmapAlloc` with a varying number of allocations (assuming the heap has
-//! 1024 allocation units and they are fully occupied).
+//! `BitmapAlloc` with a varying number of allocations (assuming the heap is
+//! fully occupied).
 //!
 //! | `size` | # of allocations | `Tlsf` (bytes) | `BitmapAloc` (bytes) |
 //! | ------ | ---------------- | -------------- | -------------------- |
@@ -45,7 +45,7 @@ use std::ops::Range;
 use int::BinaryInteger;
 use bitmaputils::*;
 
-/// Free space bitmap-based dynamic suballocator.
+/// Free space bitmap-based external memory allocator.
 ///
 /// See [the module-level documentation] for more.
 ///
