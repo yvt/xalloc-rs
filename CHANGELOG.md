@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [Unreleased]
 
 - Make more types `Debug`
+- Add type aliases `SysTlsfRegion` and `SafeTlsfRegion`
 
 ## [0.2.1] - 2017-10-28
 

@@ -147,6 +147,9 @@ pub type SafeTlsf<T> = Tlsf<
     arena::checked::Ptr,
 >;
 
+/// Type alias of `TlsfRegion` for `SafeTlsf`
+pub type SafeTlsfRegion = TlsfRegion<arena::checked::Ptr>;
+
 impl<T: BinaryUInteger> SafeTlsf<T> {
     /// Construct a `SafeTlsf`.
     pub fn new(size: T) -> Self {
@@ -170,6 +173,9 @@ pub type SysTlsf<T> = Tlsf<
     >,
     arena::sys::Ptr,
 >;
+
+/// Type alias of `TlsfRegion` for `SysTlsf`
+pub type SysTlsfRegion = TlsfRegion<arena::sys::Ptr>;
 
 impl<T: BinaryUInteger> SysTlsf<T> {
     /// Construct a `SysTlsf`.
@@ -674,24 +680,24 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 TlsfL2 {
                     bitmap: Zero::zero(),
                     l2: [
-                        // L2_SIZE elements
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                        P::default(),
-                    ],
+                // L2_SIZE elements
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+                P::default(),
+            ],
                 };
                 num_l2s as usize
             ],
