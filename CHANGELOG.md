@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.2] - 2017-10-28
+
 - Make more types `Debug`
 - Add type aliases `SysTlsfRegion` and `SafeTlsfRegion`
 
@@ -24,6 +26,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release.
 
-[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.1
+[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.2
+[0.2.2]: https://github.com/yvt/xalloc-rs/compare/v0.2.2...v0.2.1
 [0.2.1]: https://github.com/yvt/xalloc-rs/compare/v0.2.1...v0.2.0
 [0.2.0]: https://github.com/yvt/xalloc-rs/compare/v0.2.0...v0.1.0
