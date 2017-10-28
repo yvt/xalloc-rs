@@ -119,6 +119,7 @@ pub mod sys {
     use self::core::nonzero::NonZero;
 
     /// `UnsafeArena` implementation that relies on the system memory allocator.
+    #[derive(Debug, Clone, Copy)]
     pub struct SysAllocator;
 
     /// Pointer type of `SysAllocator`.
@@ -212,6 +213,7 @@ pub mod checked {
     /// Naïve memory-safe implementation of `Arena`.
     ///
     /// For a test purpose only. Do not use this in production. It is really slow.
+    #[derive(Debug)]
     pub struct CheckedArena<T> {
         map: HashMap<u64, T>,
         id: Arc<()>,
@@ -336,6 +338,7 @@ pub mod pooled {
     use std::ptr::read;
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
+    #[derive(Debug)]
     pub struct PooledArena<T, A, P>
     where
         A: UnsafeArena<Entry<T, P>, Ptr = P>,
@@ -346,6 +349,7 @@ pub mod pooled {
         _phantom: PhantomData<T>,
     }
 
+    #[derive(Debug)]
     pub struct Entry<T, P> {
         data: ManuallyDrop<T>,
         occupied: bool,

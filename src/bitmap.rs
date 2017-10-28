@@ -50,6 +50,7 @@ use bitmaputils::*;
 /// See [the module-level documentation] for more.
 ///
 /// [the module-level documentation]: index.html
+#[derive(Debug, Clone)]
 pub struct BitmapAlloc {
     bitmap: Vec<usize>,
     size: usize,
