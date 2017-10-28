@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Rename `TlsfSuballocRegion` to `TlsfRegion`.
 - Add a free space bitmap-based allocator.
 - Add CHANGELOG to track notable changes among versions.
 
