@@ -10,10 +10,10 @@
 //!
 //! # Provided Algorithms
 //!
-//! |               Name              | Time Complexity | Space Complexity |
-//! | ------------------------------- | --------------- | ---------------- |
-//! | TLSF (Two-Level Segregated Fit) | `O(1)`          | `O(N)`           |
-//! | Free space bitmap               | `O(size)`       | `O(size)`        |
+//! |               Name              | Time Complexity |  Space Complexity |
+//! | ------------------------------- | --------------- | ----------------- |
+//! | TLSF (Two-Level Segregated Fit) | `O(1)`          | `O(N + log size)` |
+//! | Free space bitmap               | `O(size)`       | `O(size)`         |
 //!
 //! (`size`: heap size measured by the number of allocation units, `N`: number of allocations)
 //!
