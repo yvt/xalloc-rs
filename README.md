@@ -38,7 +38,10 @@ tlsf.alloc(2).unwrap();
 ## Feature Flags
 
 - `nightly` — Enables optimizations which currently require a Nightly Rust
-  compiler.
+  compiler. This flag is now unused due to the [stabilization] of `NonNull`
+  in Rust 1.25.
+
+[stabilization]: https://blog.rust-lang.org/2018/03/29/Rust-1.25.html
 
 
 License: MIT
