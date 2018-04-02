@@ -8,9 +8,11 @@
 //
 #![feature(test)]
 extern crate test;
+extern crate unreachable;
 extern crate xalloc;
 
 use test::Bencher;
+use unreachable::UncheckedOptionExt;
 use xalloc::*;
 
 struct Xorshift32(u32);
@@ -28,14 +30,14 @@ impl Xorshift32 {
 fn bitmap_random(b: &mut Bencher) {
     let mut v: Vec<_> = (0..512).map(|_| None).collect();
     let mut sa = BitmapAlloc::new(512);
-    b.iter(|| {
+    b.iter(|| unsafe {
         let mut r = Xorshift32(0x11451419);
         for _ in 0..65536 {
             let i = ((r.next() >> 8) & 511) as usize;
             if v[i].is_some() {
-                sa.dealloc_relaxed(v[i].take().unwrap());
+                sa.dealloc_relaxed(v[i].take().unchecked_unwrap());
             } else {
-                v[i] = Some(sa.alloc(1).unwrap().0);
+                v[i] = Some(sa.alloc(1).unchecked_unwrap().0);
             }
         }
         for x in v.iter_mut() {
@@ -50,14 +52,14 @@ fn bitmap_random(b: &mut Bencher) {
 fn bitmap_4_random(b: &mut Bencher) {
     let mut v: Vec<_> = (0..512).map(|_| None).collect();
     let mut sa = BitmapAlloc::new(512 * 4);
-    b.iter(|| {
+    b.iter(|| unsafe {
         let mut r = Xorshift32(0x11451419);
         for _ in 0..65536 {
             let i = ((r.next() >> 8) & 511) as usize;
             if v[i].is_some() {
-                sa.dealloc_relaxed(v[i].take().unwrap());
+                sa.dealloc_relaxed(v[i].take().unchecked_unwrap());
             } else {
-                v[i] = Some(sa.alloc(4).unwrap().0);
+                v[i] = Some(sa.alloc(4).unchecked_unwrap().0);
             }
         }
         for x in v.iter_mut() {

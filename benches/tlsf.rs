@@ -8,9 +8,11 @@
 //
 #![feature(test)]
 extern crate test;
+extern crate unreachable;
 extern crate xalloc;
 
 use test::Bencher;
+use unreachable::UncheckedOptionExt;
 use xalloc::*;
 
 struct Xorshift32(u32);
@@ -28,19 +30,19 @@ impl Xorshift32 {
 fn systlsf_random(b: &mut Bencher) {
     let mut v: Vec<_> = (0..512).map(|_| None).collect();
     let mut sa = SysTlsf::with_capacity(512u32, 512);
-    b.iter(|| {
+    b.iter(|| unsafe {
         let mut r = Xorshift32(0x11451419);
         for _ in 0..65536 {
             let i = ((r.next() >> 8) & 511) as usize;
             if v[i].is_some() {
-                sa.dealloc(v[i].take().unwrap()).unwrap();
+                sa.dealloc_unchecked(v[i].take().unchecked_unwrap());
             } else {
-                v[i] = Some(sa.alloc(1u32).unwrap().0);
+                v[i] = Some(sa.alloc(1u32).unchecked_unwrap().0);
             }
         }
         for x in v.iter_mut() {
             if let Some(x) = x.take() {
-                sa.dealloc(x).unwrap();
+                sa.dealloc_unchecked(x);
             }
         }
     });
