@@ -96,9 +96,10 @@
 //!
 //! ## Performance
 //!
-//! The allocation throughput is lower than jemalloc by roughly 10%.
+//! The allocation throughput is mostly equivalent to that of jemalloc.
 use num_traits::{One, Zero};
 use std::fmt;
+use unreachable::{unreachable, UncheckedOptionExt};
 
 use arena::{SafeArena, UnsafeArena, UnsafeArenaWithMembershipCheck};
 use int::{BinaryInteger, BinaryUInteger};
@@ -441,9 +442,12 @@ where
 
         let (prev_ptr, next_ptr) = {
             let block = self.blocks.get_unchecked(&block_ptr);
-            match block.state {
-                TlsfBlockState::Used => {}
-                _ => unreachable!(),
+            if let TlsfBlockState::Used = block.state {
+            } else {
+                // It's impossible for the application to obtain a
+                // `TlsfRegion` for a free block. `TlsfRegion` isn't even
+                // `Clone` nor `Copy`.
+                unreachable();
             }
             (block.prev.clone(), block.next.clone())
         };
@@ -483,12 +487,14 @@ where
         }
 
         if prev_info.is_some() {
-            self.l1.unlink(&mut self.blocks, prev_ptr.clone().unwrap());
-            self.blocks.remove_unchecked(&prev_ptr.unwrap());
+            self.l1
+                .unlink(&mut self.blocks, prev_ptr.clone().unchecked_unwrap());
+            self.blocks.remove_unchecked(&prev_ptr.unchecked_unwrap());
         }
         if next_info.is_some() {
-            self.l1.unlink(&mut self.blocks, next_ptr.clone().unwrap());
-            self.blocks.remove_unchecked(&next_ptr.unwrap());
+            self.l1
+                .unlink(&mut self.blocks, next_ptr.clone().unchecked_unwrap());
+            self.blocks.remove_unchecked(&next_ptr.unchecked_unwrap());
         }
 
         if let Some((Some(new_prev_ptr), _)) = prev_info {
@@ -692,10 +698,19 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
     /// Compute the first and second level table index for a given size of free
     /// space.
+    #[inline]
     fn map_size(&self, size: &T) -> (u32, u32) {
-        let l1_index = T::max_digits().saturating_sub(LOG2_L2_SIZE + size.leading_zeros());
-        let min_bit_index = l1_index.saturating_sub(1);
-        let l2_index = size.extract_u32(min_bit_index..min_bit_index + LOG2_L2_SIZE);
+        // Equivalent to:
+        // `let l1_index = T::max_digits().saturating_sub(LOG2_L2_SIZE + size.leading_zeros());`
+        let l1_index = T::max_digits() - LOG2_L2_SIZE
+            - (size.clone() | T::ones(0..LOG2_L2_SIZE)).leading_zeros();
+
+        // Branch-less equivalent of:
+        // `let min_bit_index = l1_index.saturating_sub(1);`
+        let min_bit_index = l1_index - if l1_index == 0 { 0 } else { 1 };
+
+        let l2_index = (size.clone() >> min_bit_index).extract_u32(0..LOG2_L2_SIZE);
+
         (l1_index, l2_index)
     }
 
@@ -722,6 +737,9 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
         let (l1_first, l2_first) = self.map_size(size);
         if self.bitmap.get_bit(l1_first) {
+            if l1_first as usize >= self.l1.len() {
+                unreachable();
+            }
             let ref l2t: TlsfL2<P> = self.l1[l1_first as usize];
             if l2t.bitmap.get_bit(l2_first) {
                 // Found a free block in the same bucket.
@@ -734,7 +752,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
             // Search the same second level table.
             let l2 = l2t.bitmap.bit_scan_forward(l2_first + 1);
-            if l2 != TlsfL2Bitmap::max_digits() {
+            if l2 < L2_SIZE {
                 // Found one
                 let block_ptr = l2t.l2[l2 as usize].clone();
                 let can_fit = if align_bits == 0 {
@@ -760,6 +778,9 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
         let mut l2_first = if l1_first == T::max_digits() {
             return None;
         } else {
+            if l1_first as usize >= self.l1.len() {
+                unreachable();
+            }
             let ref l2t: TlsfL2<P> = self.l1[l1_first as usize];
             let l2 = l2t.bitmap.bit_scan_forward(0);
             debug_assert_ne!(l2, TlsfL2Bitmap::max_digits());
@@ -823,13 +844,14 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     }
 
     /// Remove the given block from the free space list.
+    #[inline]
     unsafe fn unlink<A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>>(
         &mut self,
         blocks: &mut A,
         block_ptr: P,
     ) {
         let (l1, l2) = self.map_size(&blocks.get_unchecked(&block_ptr).size);
-        if l1 == self.l1.len() as u32 {
+        if l1 as usize >= self.l1.len() {
             self.entire = None;
         } else {
             {
@@ -855,7 +877,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 {
                     (prev_free.clone(), next_free.clone())
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
             };
 
@@ -869,7 +891,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                     debug_assert_eq!(*prev_free, Some(block_ptr.clone()));
                     *prev_free = Some(prev_ptr.clone());
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
             }
 
@@ -882,7 +904,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                     debug_assert_eq!(*next_free, Some(block_ptr.clone()));
                     *next_free = o_next_ptr;
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
             }
         }
@@ -893,6 +915,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     /// `block_ptr` must be the head of the free space list specified by `position`.
     /// `block_ptr` returned by `search_suitable` always satisfies this condition,
     /// supposing no intervening modification was done.
+    #[inline]
     unsafe fn unlink_head<A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>>(
         &mut self,
         blocks: &mut A,
@@ -916,7 +939,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 if let TlsfBlockState::Free { ref next_free, .. } = block.state {
                     next_free.clone()
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
             };
 
@@ -929,7 +952,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                     debug_assert_eq!(*prev_free, Some(block_ptr));
                     *prev_free = None;
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
 
                 l2t.l2[l2 as usize] = next_block_ptr;
@@ -952,12 +975,13 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     /// `block_ptr` must point a valid `TlsfBlock` in `blocks`.
     /// The given block's `TlsfBlock::state` will be overwritten with a new
     /// `TlsfBlockState::Free` value.
+    #[inline]
     unsafe fn link<A>(&mut self, blocks: &mut A, block_ptr: P)
     where
         A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>,
     {
         let (l1, l2) = self.map_size(&blocks.get_unchecked(&block_ptr).size);
-        if l1 == self.l1.len() as u32 {
+        if l1 as usize >= self.l1.len() {
             self.entire = Some(block_ptr);
         } else {
             let ref mut l2t: TlsfL2<P> = self.l1[l1 as usize];
@@ -986,7 +1010,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                     debug_assert!(prev_free.is_none());
                     *prev_free = Some(block_ptr.clone());
                 } else {
-                    unreachable!()
+                    unreachable();
                 }
             }
 

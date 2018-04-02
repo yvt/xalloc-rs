@@ -49,6 +49,7 @@
 //!
 pub extern crate num_traits;
 pub extern crate num_integer;
+extern crate unreachable;
 
 pub mod arena;
 pub mod bitmap;
