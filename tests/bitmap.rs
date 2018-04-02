@@ -68,7 +68,7 @@ fn allocate_two() {
             let result1 = sa.alloc(k);
             assert!(result1.is_some());
             println!("  alloc({})", i - k);
-            let result2 = sa.alloc((i - k));
+            let result2 = sa.alloc(i - k);
             assert!(result2.is_some());
         }
     }
@@ -85,10 +85,10 @@ fn allocate_three() {
                 let result1 = sa.alloc(k);
                 assert!(result1.is_some());
                 println!("  alloc({})", i - k - j);
-                let result2 = sa.alloc((i - k - j));
+                let result2 = sa.alloc(i - k - j);
                 assert!(result2.is_some());
                 println!("  alloc({})", j);
-                let result3 = sa.alloc((j));
+                let result3 = sa.alloc(j);
                 assert!(result3.is_some());
             }
         }
@@ -105,7 +105,7 @@ fn allocate_deallocate_two1() {
             let result1 = sa.alloc(k);
             assert!(result1.is_some());
             println!("  alloc({})", i - k);
-            let result2 = sa.alloc((i - k));
+            let result2 = sa.alloc(i - k);
             assert!(result2.is_some());
 
             println!("  dealloc(result1)");
