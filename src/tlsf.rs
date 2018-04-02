@@ -97,11 +97,11 @@
 //! ## Performance
 //!
 //! The allocation throughput is lower than jemalloc by roughly 10%.
+use num_traits::{One, Zero};
 use std::fmt;
-use num_traits::{Zero, One};
 
+use arena::{SafeArena, UnsafeArena, UnsafeArenaWithMembershipCheck};
 use int::{BinaryInteger, BinaryUInteger};
-use arena::{UnsafeArena, UnsafeArenaWithMembershipCheck, SafeArena};
 
 type TlsfL2Bitmap = u16;
 const LOG2_L2_SIZE: u32 = 4; // must be <= log2(sizeof(TlsfL2Bitmap)*8)
@@ -141,11 +141,8 @@ use arena;
 ///  - `T` is an integer type used to represent region sizes. You usually use
 ///    `u32` or `u64` for this.
 ///
-pub type SafeTlsf<T> = Tlsf<
-    T,
-    arena::CheckedArena<TlsfBlock<T, arena::checked::Ptr>>,
-    arena::checked::Ptr,
->;
+pub type SafeTlsf<T> =
+    Tlsf<T, arena::CheckedArena<TlsfBlock<T, arena::checked::Ptr>>, arena::checked::Ptr>;
 
 /// Type alias of `TlsfRegion` for `SafeTlsf`
 pub type SafeTlsfRegion = TlsfRegion<arena::checked::Ptr>;
@@ -166,11 +163,7 @@ impl<T: BinaryUInteger> SafeTlsf<T> {
 ///
 pub type SysTlsf<T> = Tlsf<
     T,
-    arena::PooledArena<
-        TlsfBlock<T, arena::sys::Ptr>,
-        arena::SysAllocator,
-        arena::sys::Ptr,
-    >,
+    arena::PooledArena<TlsfBlock<T, arena::sys::Ptr>, arena::SysAllocator, arena::sys::Ptr>,
     arena::sys::Ptr,
 >;
 
@@ -376,11 +369,8 @@ where
             }
             self.blocks.reserve(reserve);
 
-            self.l1.unlink_head(
-                &mut self.blocks,
-                free_block_ptr.clone(),
-                position,
-            );
+            self.l1
+                .unlink_head(&mut self.blocks, free_block_ptr.clone(), position);
             self.blocks.remove_unchecked(&free_block_ptr);
 
             if pad != Zero::zero() {
@@ -437,7 +427,6 @@ where
                 self.blocks.get_unchecked_mut(&ptr).prev = Some(main_ptr.clone());
             }
 
-
             (TlsfRegion(main_ptr), address)
         })
     }
@@ -458,7 +447,6 @@ where
             }
             (block.prev.clone(), block.next.clone())
         };
-
 
         // Try to merge neighboring free blocks
         let prev_info = if let Some(ref ptr) = prev_ptr {
@@ -536,10 +524,7 @@ where
                 write!(
                     &mut s,
                     "{:?} - [{:?}, {:?}] - {:?}\n",
-                    cur.prev,
-                    cur_ptr,
-                    cur.state,
-                    cur.next
+                    cur.prev, cur_ptr, cur.state, cur.next
                 ).unwrap();
                 if let Some(next_ptr) = next_ptr {
                     cur_ptr = next_ptr;
@@ -604,8 +589,7 @@ where
 impl<T, P, A> Tlsf<T, A, P>
 where
     T: BinaryUInteger,
-    A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>
-        + UnsafeArenaWithMembershipCheck<TlsfBlock<T, P>>,
+    A: UnsafeArena<TlsfBlock<T, P>, Ptr = P> + UnsafeArenaWithMembershipCheck<TlsfBlock<T, P>>,
     P: Clone + Default + PartialEq + Eq + fmt::Debug,
 {
     /// Deallocate the specified region.
@@ -680,24 +664,24 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 TlsfL2 {
                     bitmap: Zero::zero(),
                     l2: [
-                // L2_SIZE elements
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-                P::default(),
-            ],
+                        // L2_SIZE elements
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                        P::default(),
+                    ],
                 };
                 num_l2s as usize
             ],
@@ -878,7 +862,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
             // Unlink the current block
             if let Some(ref next_ptr) = o_next_ptr {
                 let mut next_block = blocks.get_unchecked_mut(next_ptr);
-                if let TlsfBlockState::Free { ref mut prev_free, .. } = next_block.state {
+                if let TlsfBlockState::Free {
+                    ref mut prev_free, ..
+                } = next_block.state
+                {
                     debug_assert_eq!(*prev_free, Some(block_ptr.clone()));
                     *prev_free = Some(prev_ptr.clone());
                 } else {
@@ -888,7 +875,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
             {
                 let prev_block = blocks.get_unchecked_mut(&prev_ptr);
-                if let TlsfBlockState::Free { ref mut next_free, .. } = prev_block.state {
+                if let TlsfBlockState::Free {
+                    ref mut next_free, ..
+                } = prev_block.state
+                {
                     debug_assert_eq!(*next_free, Some(block_ptr.clone()));
                     *next_free = o_next_ptr;
                 } else {
@@ -932,7 +922,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
             if let Some(next_block_ptr) = next_block_ptr {
                 let next_block = blocks.get_unchecked_mut(&next_block_ptr);
-                if let TlsfBlockState::Free { ref mut prev_free, .. } = next_block.state {
+                if let TlsfBlockState::Free {
+                    ref mut prev_free, ..
+                } = next_block.state
+                {
                     debug_assert_eq!(*prev_free, Some(block_ptr));
                     *prev_free = None;
                 } else {
@@ -948,7 +941,6 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
                 // don't care about the value of `l2t.l2[l2 as usize]`
             }
-
         } else {
             debug_assert_eq!(Some(block_ptr), self.entire);
             self.entire = None;
@@ -987,7 +979,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
             }
             if head_valid {
                 let next_block = blocks.get_unchecked_mut(head);
-                if let TlsfBlockState::Free { ref mut prev_free, .. } = next_block.state {
+                if let TlsfBlockState::Free {
+                    ref mut prev_free, ..
+                } = next_block.state
+                {
                     debug_assert!(prev_free.is_none());
                     *prev_free = Some(block_ptr.clone());
                 } else {
