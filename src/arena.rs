@@ -113,20 +113,14 @@ pub mod sys {
     use std::mem::{ManuallyDrop, transmute, transmute_copy};
     use std::ptr::read;
 
-    #[cfg(feature = "nightly")]
-    extern crate core;
-    #[cfg(feature = "nightly")]
-    use self::core::nonzero::NonZero;
+    use std::ptr::NonNull;
 
     /// `UnsafeArena` implementation that relies on the system memory allocator.
     #[derive(Debug, Clone, Copy)]
     pub struct SysAllocator;
 
     /// Pointer type of `SysAllocator`.
-    #[cfg(feature = "nightly")]
-    pub struct Ptr(NonZero<*mut u8>);
-    #[cfg(not(feature = "nightly"))]
-    pub struct Ptr(*mut u8);
+    pub struct Ptr(NonNull<u8>);
 
     impl Ptr {
         unsafe fn new<T>(ptr: *mut T) -> Self {

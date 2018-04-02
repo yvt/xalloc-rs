@@ -42,9 +42,11 @@
 //! # Feature Flags
 //!
 //! - `nightly` — Enables optimizations which currently require a Nightly Rust
-//!   compiler.
+//!   compiler. This flag is now unused due to the [stabilization] of `NonNull`
+//!   in Rust 1.25.
 //!
-#![cfg_attr(feature = "nightly", feature(nonzero))]
+//! [stabilization]: https://blog.rust-lang.org/2018/03/29/Rust-1.25.html
+//!
 pub extern crate num_traits;
 pub extern crate num_integer;
 
