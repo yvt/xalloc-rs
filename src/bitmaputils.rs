@@ -6,8 +6,8 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
-use std::ops::Range;
 use int::BinaryUInteger;
+use std::ops::Range;
 
 pub fn set_bits_ranged<T: BinaryUInteger + Copy>(map: &mut [T], range: Range<usize>) {
     let width = T::max_digits() as usize;
@@ -337,13 +337,15 @@ mod find_zeros_tests {
     }
 
     fn test_one(count: usize) {
-        patterns(|p| for &s in [0, 1, 2, 30, 31, 32].iter() {
-            assert_eq!(
-                find_zeros(p, s, count),
-                find_zeros_naive(p, s, count),
-                "{:?}",
-                (BitField(p), s, count)
-            );
+        patterns(|p| {
+            for &s in [0, 1, 2, 30, 31, 32].iter() {
+                assert_eq!(
+                    find_zeros(p, s, count),
+                    find_zeros_naive(p, s, count),
+                    "{:?}",
+                    (BitField(p), s, count)
+                );
+            }
         });
     }
 

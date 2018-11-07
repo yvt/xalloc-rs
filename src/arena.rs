@@ -110,7 +110,7 @@ fn test_common<T: UnsafeArenaWithMembershipCheck<&'static str>>(arena: &mut T) {
 /// `UnsafeArena` implementation that relies on the system memory allocator.
 pub mod sys {
     use super::*;
-    use std::mem::{ManuallyDrop, transmute, transmute_copy};
+    use std::mem::{transmute, transmute_copy, ManuallyDrop};
     use std::ptr::read;
 
     use std::ptr::NonNull;
@@ -201,8 +201,8 @@ pub use self::sys::SysAllocator;
 /// Naïve memory-safe implementation of `Arena`.
 pub mod checked {
     use super::*;
-    use std::sync::Arc;
     use std::collections::HashMap;
+    use std::sync::Arc;
 
     /// Naïve memory-safe implementation of `Arena`.
     ///
@@ -328,7 +328,7 @@ pub use self::checked::CheckedArena;
 pub mod pooled {
     use super::*;
     use std::marker::PhantomData;
-    use std::mem::{ManuallyDrop, uninitialized};
+    use std::mem::{uninitialized, ManuallyDrop};
     use std::ptr::read;
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
@@ -456,8 +456,7 @@ pub mod pooled {
         }
     }
 
-    impl<T, A, P> UnsafeArenaWithMembershipCheck<T>
-        for PooledArena<T, A, P>
+    impl<T, A, P> UnsafeArenaWithMembershipCheck<T> for PooledArena<T, A, P>
     where
         A: UnsafeArena<Entry<T, P>, Ptr = P> + UnsafeArenaWithMembershipCheck<Entry<T, P>>,
         P: Clone + Default + PartialEq + Eq + fmt::Debug,
@@ -469,8 +468,7 @@ pub mod pooled {
 
     impl<T, A, P> Arena<T> for PooledArena<T, A, P>
     where
-        A: UnsafeArena<Entry<T, P>, Ptr = P>
-            + Arena<Entry<T, P>>,
+        A: UnsafeArena<Entry<T, P>, Ptr = P> + Arena<Entry<T, P>>,
         P: Clone + Default + PartialEq + Eq + fmt::Debug,
     {
         fn get(&self, ptr: &Self::Ptr) -> Option<&T> {

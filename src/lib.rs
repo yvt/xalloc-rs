@@ -53,8 +53,10 @@ extern crate unreachable;
 pub mod arena;
 pub mod bitmap;
 mod bitmaputils;
-pub mod tlsf;
 pub mod int;
+pub mod tlsf;
 
-pub use self::tlsf::{Tlsf, SafeTlsf, SysTlsf, TlsfBlock, TlsfRegion, SysTlsfRegion, SafeTlsfRegion};
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
+pub use self::tlsf::{
+    SafeTlsf, SafeTlsfRegion, SysTlsf, SysTlsfRegion, Tlsf, TlsfBlock, TlsfRegion,
+};

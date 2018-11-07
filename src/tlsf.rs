@@ -531,7 +531,8 @@ where
                     &mut s,
                     "{:?} - [{:?}, {:?}] - {:?}\n",
                     cur.prev, cur_ptr, cur.state, cur.next
-                ).unwrap();
+                )
+                .unwrap();
                 if let Some(next_ptr) = next_ptr {
                     cur_ptr = next_ptr;
                 } else {
@@ -702,7 +703,8 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     fn map_size(&self, size: &T) -> (u32, u32) {
         // Equivalent to:
         // `let l1_index = T::max_digits().saturating_sub(LOG2_L2_SIZE + size.leading_zeros());`
-        let l1_index = T::max_digits() - LOG2_L2_SIZE
+        let l1_index = T::max_digits()
+            - LOG2_L2_SIZE
             - (size.clone() | T::ones(0..LOG2_L2_SIZE)).leading_zeros();
 
         // Branch-less equivalent of:
@@ -762,12 +764,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 };
                 if let Some(pad) = can_fit {
                     if align_bits == 0 {
-                        debug_assert!(
-                            blocks
-                                .get_unchecked(&block_ptr)
-                                .can_fit(size, align_bits)
-                                .is_some()
-                        );
+                        debug_assert!(blocks
+                            .get_unchecked(&block_ptr)
+                            .can_fit(size, align_bits)
+                            .is_some());
                     }
                     return Some((Some((l1_first, l2)), block_ptr, pad));
                 }
@@ -792,12 +792,10 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
             };
             if let Some(pad) = can_fit {
                 if align_bits == 0 {
-                    debug_assert!(
-                        blocks
-                            .get_unchecked(&block_ptr)
-                            .can_fit(size, align_bits)
-                            .is_some()
-                    );
+                    debug_assert!(blocks
+                        .get_unchecked(&block_ptr)
+                        .can_fit(size, align_bits)
+                        .is_some());
                 }
                 return Some((Some((l1_first, l2)), block_ptr, pad));
             }

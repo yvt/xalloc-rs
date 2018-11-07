@@ -8,8 +8,8 @@
 //
 extern crate xalloc;
 
-use xalloc::BitmapAlloc;
 use std::ops;
+use xalloc::BitmapAlloc;
 
 struct Xorshift32(u32);
 

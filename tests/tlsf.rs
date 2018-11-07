@@ -8,8 +8,8 @@
 //
 extern crate xalloc;
 
-use xalloc::SafeTlsf;
 use std::ops;
+use xalloc::SafeTlsf;
 
 struct Xorshift32(u32);
 

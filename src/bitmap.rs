@@ -41,9 +41,9 @@
 //! ## Performance
 //!
 //! The allocation throughput is roughly the same as of jemalloc.
-use std::ops::Range;
-use int::BinaryInteger;
 use bitmaputils::*;
+use int::BinaryInteger;
+use std::ops::Range;
 
 /// Free space bitmap-based external memory allocator.
 ///
@@ -93,9 +93,8 @@ impl BitmapAlloc {
     /// `size` must not be zero.
     pub fn alloc_next(&mut self, size: usize) -> Option<(BitmapAllocRegion, usize)> {
         let next = self.next;
-        self.alloc_inner(size, next).or_else(
-            || self.alloc_first(size),
-        )
+        self.alloc_inner(size, next)
+            .or_else(|| self.alloc_first(size))
     }
 
     /// Allocate a region of the size `size` using a First-Fit strategy.
