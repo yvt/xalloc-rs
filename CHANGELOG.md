@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.4] - 2018-11-07
+
+- Fix a compilation issue that happens when multiple versions of `num-*` crates are mixed up
+- Optimize for performance through a use of the `unreachable` crate and an architecture-specific micro-tuning
+
 ## [0.2.3] - 2018-04-02
 
 - Use `std::ptr::NonNull` stabilized in [Rust 1.25]
@@ -32,7 +37,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release.
 
-[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.3
+[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.4
+[0.2.4]: https://github.com/yvt/xalloc-rs/compare/v0.2.4...v0.2.3
 [0.2.3]: https://github.com/yvt/xalloc-rs/compare/v0.2.3...v0.2.2
 [0.2.2]: https://github.com/yvt/xalloc-rs/compare/v0.2.2...v0.2.1
 [0.2.1]: https://github.com/yvt/xalloc-rs/compare/v0.2.1...v0.2.0
