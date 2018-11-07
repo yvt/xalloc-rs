@@ -47,6 +47,10 @@
 //!
 //! [stabilization]: https://blog.rust-lang.org/2018/03/29/Rust-1.25.html
 //!
+// Clippy does not understand that generic numeric types are not always
+// as capable as built-in ones and raise false warnings
+#![allow(clippy::op_ref)]
+
 pub extern crate num;
 extern crate unreachable;
 

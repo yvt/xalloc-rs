@@ -30,8 +30,8 @@ pub fn set_bits_ranged<T: BinaryUInteger + Copy>(map: &mut [T], range: Range<usi
             map[start_i] |= T::ones(start_f as u32..width as u32);
             start_i += 1;
         }
-        for i in start_i..end_i {
-            map[i] = !T::zero();
+        for e in &mut map[start_i..end_i] {
+            *e = !T::zero();
         }
         if end_f != 0 {
             map[end_i] |= T::ones(0..end_f as u32);
@@ -60,8 +60,8 @@ pub fn clear_bits_ranged<T: BinaryUInteger + Copy>(map: &mut [T], range: Range<u
             map[start_i] &= !T::ones(start_f as u32..width as u32);
             start_i += 1;
         }
-        for i in start_i..end_i {
-            map[i] = T::zero();
+        for e in &mut map[start_i..end_i] {
+            *e = T::zero();
         }
         if end_f != 0 {
             map[end_i] &= !T::ones(0..end_f as u32);

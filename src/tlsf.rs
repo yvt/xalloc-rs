@@ -225,7 +225,7 @@ enum TlsfBlockState<P> {
 impl<P> TlsfBlockState<P> {
     fn is_used(&self) -> bool {
         match self {
-            &TlsfBlockState::Used => true,
+            TlsfBlockState::Used => true,
             _ => false,
         }
     }
@@ -289,7 +289,7 @@ where
     pub fn with_arena(size: T, arena: A) -> Self {
         let mut sa = Tlsf {
             l1: TlsfL1::new(&size),
-            size: size,
+            size,
             blocks: arena,
         };
 
@@ -326,6 +326,7 @@ where
     ///
     /// - `align` must be a power of two.
     /// - `size` must not be zero.
+    #[allow(clippy::needless_pass_by_value)]
     pub fn alloc_aligned(&mut self, size: T, align: T) -> Option<(TlsfRegion<P>, T)> {
         assert!(align.is_power_of_two());
         self.allocate_aligned_log2(size, align.trailing_zeros())
@@ -414,8 +415,7 @@ where
                     size,
                     state: TlsfBlockState::Used, // care!
                 };
-                let block_ptr = self.blocks.insert(block);
-                block_ptr
+                self.blocks.insert(block)
             };
 
             // Connect neighboring blocks to this
@@ -527,9 +527,9 @@ where
             loop {
                 let cur = self.blocks.get_unchecked(&cur_ptr);
                 let next_ptr = cur.next.clone();
-                write!(
+                writeln!(
                     &mut s,
-                    "{:?} - [{:?}, {:?}] - {:?}\n",
+                    "{:?} - [{:?}, {:?}] - {:?}",
                     cur.prev, cur_ptr, cur.state, cur.next
                 )
                 .unwrap();
@@ -605,7 +605,8 @@ where
     pub fn dealloc(&mut self, r: TlsfRegion<P>) -> Result<(), TlsfRegion<P>> {
         unsafe {
             if self.blocks.contains_unchecked(&r.0) {
-                Ok(self.dealloc_unchecked(r))
+                self.dealloc_unchecked(r);
+                Ok(())
             } else {
                 Err(r)
             }
@@ -727,6 +728,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     ///      - `None`: `block_ptr` is `self.entire`.
     ///
     /// `size` must be less than or equal to the size of the heap.
+    #[allow(clippy::type_complexity)]
     unsafe fn search_suitable<A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>>(
         &self,
         blocks: &mut A,
@@ -742,7 +744,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
             if l1_first as usize >= self.l1.len() {
                 unreachable();
             }
-            let ref l2t: TlsfL2<P> = self.l1[l1_first as usize];
+            let l2t: &TlsfL2<P> = &self.l1[l1_first as usize];
             if l2t.bitmap.get_bit(l2_first) {
                 // Found a free block in the same bucket.
                 let block_ptr = l2t.l2[l2_first as usize].clone();
@@ -781,7 +783,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
             if l1_first as usize >= self.l1.len() {
                 unreachable();
             }
-            let ref l2t: TlsfL2<P> = self.l1[l1_first as usize];
+            let l2t: &TlsfL2<P> = &self.l1[l1_first as usize];
             let l2 = l2t.bitmap.bit_scan_forward(0);
             debug_assert_ne!(l2, TlsfL2Bitmap::max_digits());
             let block_ptr = l2t.l2[l2 as usize].clone();
@@ -824,7 +826,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
                 l2_first = 0;
             }
 
-            let ref l2t: TlsfL2<P> = self.l1[l1_first as usize];
+            let l2t: &TlsfL2<P> = &self.l1[l1_first as usize];
             let l2 = l2t.bitmap.bit_scan_forward(l2_first);
             if l2 == TlsfL2Bitmap::max_digits() {
                 l2_first = l2;
@@ -921,7 +923,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
         position: Option<(u32, u32)>,
     ) {
         if let Some((l1, l2)) = position {
-            let ref mut l2t: TlsfL2<P> = self.l1[l1 as usize];
+            let l2t: &mut TlsfL2<P> = &mut self.l1[l1 as usize];
 
             debug_assert!(self.bitmap.get_bit(l1));
             debug_assert!(
@@ -982,7 +984,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
         if l1 as usize >= self.l1.len() {
             self.entire = Some(block_ptr);
         } else {
-            let ref mut l2t: TlsfL2<P> = self.l1[l1 as usize];
+            let l2t: &mut TlsfL2<P> = &mut self.l1[l1 as usize];
 
             // Update bitmaps
             let head_valid = l2t.bitmap.get_bit(l2);

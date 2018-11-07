@@ -229,6 +229,12 @@ pub mod checked {
         }
     }
 
+    impl<T> Default for CheckedArena<T> {
+        fn default() -> Self {
+            Self::new()
+        }
+    }
+
     impl<T> UnsafeArena<T> for CheckedArena<T> {
         type Ptr = Ptr;
 
