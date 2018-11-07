@@ -97,7 +97,7 @@
 //! ## Performance
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
-use num_traits::{One, Zero};
+use num::{One, Zero};
 use std::fmt;
 use unreachable::{unreachable, UncheckedOptionExt};
 

@@ -7,7 +7,7 @@
 // according to those terms.
 //
 //! Traits for integral types.
-use num_integer::Integer;
+use num::Integer;
 use std::{ops, fmt};
 use std::mem::size_of;
 

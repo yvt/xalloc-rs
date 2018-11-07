@@ -47,8 +47,7 @@
 //!
 //! [stabilization]: https://blog.rust-lang.org/2018/03/29/Rust-1.25.html
 //!
-pub extern crate num_traits;
-pub extern crate num_integer;
+pub extern crate num;
 extern crate unreachable;
 
 pub mod arena;
