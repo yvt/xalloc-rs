@@ -329,7 +329,7 @@ where
     ///
     /// - `align` must be a power of two.
     /// - `size` must not be zero.
-    #[allow(clippy::needless_pass_by_value)]
+    #[cfg_attr(feature = "cargo-clippy", allow(clippy::needless_pass_by_value))]
     pub fn alloc_aligned(&mut self, size: T, align: T) -> Option<(TlsfRegion<P>, T)> {
         assert!(align.is_power_of_two());
         self.allocate_aligned_log2(size, align.trailing_zeros())
@@ -731,7 +731,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
     ///      - `None`: `block_ptr` is `self.entire`.
     ///
     /// `size` must be less than or equal to the size of the heap.
-    #[allow(clippy::type_complexity)]
+    #[cfg_attr(feature = "cargo-clippy", allow(clippy::type_complexity))]
     unsafe fn search_suitable<A: UnsafeArena<TlsfBlock<T, P>, Ptr = P>>(
         &self,
         blocks: &mut A,

@@ -147,7 +147,7 @@ macro_rules! impl_binary_integer {
                 }
             }
             #[inline]
-            #[allow(clippy::cast_lossless)]
+            #[cfg_attr(feature = "cargo-clippy", allow(clippy::cast_lossless))]
             fn extract_u32(&self, range: ops::Range<u32>) -> u32 {
                 let start = range.start;
                 ((self & Self::ones_truncated(range)) >> start) as u32
