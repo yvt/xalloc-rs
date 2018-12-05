@@ -133,9 +133,11 @@ where
 
 use arena;
 
-/// `Tlsf` that uses `CheckedArena` for rigorous memory safety check.
+/// [`Tlsf`] that uses [`CheckedArena`] for rigorous memory safety check.
 ///
-/// It is really slow. Use `SysTlsf` in a production code.
+/// It is really slow. Use [`SysTlsf`] in a production code.
+///
+/// [`CheckedArena`]: crate::arena::CheckedArena
 ///
 /// ## Type parameter
 ///
@@ -145,7 +147,7 @@ use arena;
 pub type SafeTlsf<T> =
     Tlsf<T, arena::CheckedArena<TlsfBlock<T, arena::checked::Ptr>>, arena::checked::Ptr>;
 
-/// Type alias of `TlsfRegion` for `SafeTlsf`
+/// Type alias of [`TlsfRegion`] for [`SafeTlsf`].
 pub type SafeTlsfRegion = TlsfRegion<arena::checked::Ptr>;
 
 impl<T: BinaryUInteger> SafeTlsf<T> {
@@ -168,7 +170,7 @@ pub type SysTlsf<T> = Tlsf<
     arena::sys::Ptr,
 >;
 
-/// Type alias of `TlsfRegion` for `SysTlsf`
+/// Type alias of [`TlsfRegion`] for [`SysTlsf`].
 pub type SysTlsfRegion = TlsfRegion<arena::sys::Ptr>;
 
 impl<T: BinaryUInteger> SysTlsf<T> {
@@ -186,14 +188,15 @@ impl<T: BinaryUInteger> SysTlsf<T> {
     }
 }
 
-/// A handle type to a region allocated in a `Tlsf`.
+/// A handle type to a region allocated in a [`Tlsf`].
 ///
 /// `TlsfRegion` returned by a `Tlsf` only can be used with the
 /// same `Tlsf`.
 #[derive(Debug, PartialEq, Eq, Hash)]
 pub struct TlsfRegion<P>(P);
 
-/// Internal data structure used by `Tlsf` that represents a free/occpied memory block.
+/// Internal data structure used by [`Tlsf`] that represents a free/occpied
+/// memory block.
 #[derive(Debug)]
 pub struct TlsfBlock<T, P> {
     /// Points the previous (in terms of the external memory address) block.

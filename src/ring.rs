@@ -12,7 +12,7 @@
 //! [circular buffer]: https://en.wikipedia.org/wiki/Circular_buffer
 //!
 //! The calling program is responsible for tracking which allocated part is
-//! currently the frontmost/backmost region of a `Ring`. When deallocating
+//! currently the frontmost/backmost region of a [`Ring`]. When deallocating
 //! a region, it must appropriately call `dealloc_front` or `dealloc_back`
 //! depending on the position of the region within a `Ring`.
 //!

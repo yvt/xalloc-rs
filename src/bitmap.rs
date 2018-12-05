@@ -8,7 +8,7 @@
 //
 //! Free space bitmap-based external memory allocator.
 //!
-//! This allocator uses a simple bitmap to track the allocation state, and
+//! [`BitmapAlloc`] uses a simple bitmap to track the allocation state, and
 //! relies on a naïve bit scan for allocation.
 //!
 //! ## Memory Overhead

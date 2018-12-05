@@ -6,7 +6,9 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
-//! Memory arena traits (used by `Tlsf`).
+//! Memory arena traits (used by [`Tlsf`]).
+//!
+//! [`Tlsf`]: crate::tlsf::Tlsf
 use std::fmt;
 
 /// Homogeneous memory arena types supporting operations that do not guarantee

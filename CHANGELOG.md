@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Add `Ring`, a circular memory allocator
+
 ## [0.2.4] - 2018-11-07
 
 - Fix a compilation issue that happens when multiple versions of `num-*` crates are mixed up
