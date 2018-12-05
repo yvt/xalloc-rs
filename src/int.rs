@@ -34,6 +34,9 @@ pub trait BinaryInteger:
 {
     type OneDigits: Iterator<Item = u32>;
 
+    fn max_value() -> Self;
+    fn min_value() -> Self;
+
     fn max_digits() -> u32;
 
     fn ones(range: ops::Range<u32>) -> Self;
@@ -95,6 +98,15 @@ macro_rules! impl_binary_integer {
     ($type:ty) => {
         impl BinaryInteger for $type {
             type OneDigits = OneDigits<Self>;
+
+            #[inline]
+            fn max_value() -> Self {
+                <$type>::max_value()
+            }
+            #[inline]
+            fn min_value() -> Self {
+                <$type>::min_value()
+            }
 
             #[inline]
             fn max_digits() -> u32 {
@@ -250,3 +262,13 @@ impl_binary_uinteger!(u16);
 impl_binary_uinteger!(u32);
 impl_binary_uinteger!(u64);
 impl_binary_uinteger!(usize);
+
+use num::One;
+
+pub(crate) fn round_up<T: BinaryUInteger>(x: &T, align: &T) -> T {
+    (x.clone() + align.clone() - One::one()) & !(align.clone() - One::one())
+}
+
+pub(crate) fn round_down<T: BinaryUInteger>(x: &T, align: &T) -> T {
+    x.clone() & !(align.clone() - One::one())
+}

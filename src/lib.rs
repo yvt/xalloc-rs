@@ -10,10 +10,18 @@
 //!
 //! # Provided Algorithms
 //!
+//! ## Generic
+//!
 //! |               Name              | Time Complexity |  Space Complexity |
 //! | ------------------------------- | --------------- | ----------------- |
 //! | TLSF (Two-Level Segregated Fit) | `O(1)`          | `O(N + log size)` |
 //! | Free space bitmap               | `O(size)`       | `O(size)`         |
+//!
+//! ## Specialized
+//!
+//! |               Name              | Time Complexity |  Space Complexity |
+//! | ------------------------------- | --------------- | ----------------- |
+//! | Ring buffer                     | `O(1)`          | `O(N)`            |
 //!
 //! (`size`: heap size measured by the number of allocation units, `N`: number of allocations)
 //!
@@ -58,9 +66,11 @@ pub mod arena;
 pub mod bitmap;
 mod bitmaputils;
 pub mod int;
+pub mod ring;
 pub mod tlsf;
 
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
 pub use self::tlsf::{
     SafeTlsf, SafeTlsfRegion, SysTlsf, SysTlsfRegion, Tlsf, TlsfBlock, TlsfRegion,
 };
+pub use self::ring::{Ring, RingRegion};
