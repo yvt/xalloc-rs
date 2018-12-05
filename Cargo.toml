@@ -1,6 +1,6 @@
 [package]
 name = "xalloc"
-version = "0.2.4"
+version = "0.2.5"
 authors = ["yvt <i@yvt.jp>"]
 license = "MIT"
 readme = "README.md"
