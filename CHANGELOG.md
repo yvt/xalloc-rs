@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Add `Ring::dealloc_front_until` and `Ring::dealloc_back_until`
+
 ## [0.2.5] - 2018-12-05
 
 - Add `Ring`, a circular memory allocator

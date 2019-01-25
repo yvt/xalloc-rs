@@ -240,6 +240,28 @@ impl<T: BinaryUInteger> Ring<T> {
         }
     }
 
+    /// Deallocate frontmost (first) regions until `r` becomes the new frontmost
+    /// region. `r` is not removed.
+    ///
+    /// `r` must be in `Ring`.
+    /// Otherwise, `Ring` might enter an inconsistent state and/or panic, but
+    /// does not cause an undefined behavior.
+    pub fn dealloc_front_until(&mut self, r: RingRegion<T>) {
+        assert!(!self.empty, "empty");
+        self.start = r.start;
+    }
+
+    /// Deallocate backmost (last) regions until `r` becomes the new backmost
+    /// region. `r` is not removed.
+    ///
+    /// `r` must be in `Ring`.
+    /// Otherwise, `Ring` might enter an inconsistent state and/or panic, but
+    /// does not cause an undefined behavior.
+    pub fn dealloc_back_until(&mut self, r: RingRegion<T>) {
+        assert!(!self.empty, "empty");
+        self.end = r.end;
+    }
+
     /// Deallocate the frontmost (first) region.
     ///
     /// `r` must be the current frontmost region of `Ring`.

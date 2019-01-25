@@ -60,6 +60,36 @@ fn reset2() {
 }
 
 #[test]
+fn reset3() {
+    let mut ring = Ring::new(8u32);
+    let (region1, offset1) = ring.alloc_back(4).unwrap();
+    let (_, offset2) = ring.alloc_back(4).unwrap();
+    assert_eq!(offset1, 0);
+    assert_eq!(offset2, 4);
+    assert!(ring.is_full());
+    ring.dealloc_back_until(region1);
+    ring.dealloc_back(region1);
+
+    // The `Ring` is now empty
+    assert!(ring.is_empty());
+}
+
+#[test]
+fn reset4() {
+    let mut ring = Ring::new(8u32);
+    let (_, offset1) = ring.alloc_back(4).unwrap();
+    let (region2, offset2) = ring.alloc_back(4).unwrap();
+    assert_eq!(offset1, 0);
+    assert_eq!(offset2, 4);
+    assert!(ring.is_full());
+    ring.dealloc_front_until(region2);
+    ring.dealloc_front(region2);
+
+    // The `Ring` is now empty
+    assert!(ring.is_empty());
+}
+
+#[test]
 #[should_panic]
 fn alloc_back_zero_size() {
     let mut ring = Ring::new(8u32);
