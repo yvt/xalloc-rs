@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+## [0.2.6] - 2019-02-28
+
 - Add `Ring::dealloc_front_until` and `Ring::dealloc_back_until`
 
 ## [0.2.5] - 2018-12-05
@@ -44,7 +46,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 - Initial release.
 
-[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.4
+[Unreleased]: https://github.com/yvt/xalloc-rs/compare/HEAD...v0.2.5
+[0.2.5]: https://github.com/yvt/xalloc-rs/compare/v0.2.5...v0.2.4
 [0.2.4]: https://github.com/yvt/xalloc-rs/compare/v0.2.4...v0.2.3
 [0.2.3]: https://github.com/yvt/xalloc-rs/compare/v0.2.3...v0.2.2
 [0.2.2]: https://github.com/yvt/xalloc-rs/compare/v0.2.2...v0.2.1
