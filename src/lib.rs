@@ -70,7 +70,7 @@ pub mod ring;
 pub mod tlsf;
 
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
+pub use self::ring::{Ring, RingRegion};
 pub use self::tlsf::{
     SafeTlsf, SafeTlsfRegion, SysTlsf, SysTlsfRegion, Tlsf, TlsfBlock, TlsfRegion,
 };
-pub use self::ring::{Ring, RingRegion};
