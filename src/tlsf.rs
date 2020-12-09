@@ -886,7 +886,7 @@ impl<T: BinaryUInteger, P: Clone + Default + PartialEq + Eq + fmt::Debug> TlsfL1
 
             // Unlink the current block
             if let Some(ref next_ptr) = o_next_ptr {
-                let mut next_block = blocks.get_unchecked_mut(next_ptr);
+                let next_block = blocks.get_unchecked_mut(next_ptr);
                 if let TlsfBlockState::Free {
                     ref mut prev_free, ..
                 } = next_block.state
