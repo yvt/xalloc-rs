@@ -14,5 +14,5 @@ keywords = ["allocator", "vulkan", "memory", "suballocator", "tlsf"]
 nightly = []
 
 [dependencies]
-num = "0.2.0"
+num = ">= 0.2.0, < 0.4.0"
 unreachable = "1.0.0"
