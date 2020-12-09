@@ -336,8 +336,8 @@ pub use self::checked::CheckedArena;
 pub mod pooled {
     use super::*;
     use std::marker::PhantomData;
-    use std::mem::{uninitialized, ManuallyDrop};
-    use std::ptr::read;
+    use std::mem::MaybeUninit;
+    use std::ptr::{drop_in_place, read};
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
     #[derive(Debug)]
@@ -353,7 +353,7 @@ pub mod pooled {
 
     #[derive(Debug)]
     pub struct Entry<T, P> {
-        data: ManuallyDrop<T>,
+        data: MaybeUninit<T>,
         occupied: bool,
         next: Option<P>,
     }
@@ -361,9 +361,7 @@ pub mod pooled {
     impl<T, P> Drop for Entry<T, P> {
         fn drop(&mut self) {
             if self.occupied {
-                unsafe {
-                    ManuallyDrop::drop(&mut self.data);
-                }
+                unsafe { drop_in_place(self.data.as_mut_ptr()) };
             }
         }
     }
@@ -389,7 +387,7 @@ pub mod pooled {
 
             for _ in 0..capacity {
                 let p = arena.inner.insert(Entry {
-                    data: unsafe { uninitialized() },
+                    data: MaybeUninit::uninit(),
                     occupied: false,
                     next: arena.first_vacant.take(),
                 });
@@ -426,14 +424,14 @@ pub mod pooled {
                 debug_assert!(!ent.occupied);
 
                 ent.occupied = true;
-                ent.data = ManuallyDrop::new(x);
+                ent.data = MaybeUninit::new(x);
 
                 self.first_vacant = ent.next.take();
 
                 ptr
             } else {
                 self.inner.insert(Entry {
-                    data: ManuallyDrop::new(x),
+                    data: MaybeUninit::new(x),
                     occupied: true,
                     next: None,
                 })
@@ -442,19 +440,19 @@ pub mod pooled {
 
         unsafe fn get_unchecked(&self, ptr: &Self::Ptr) -> &T {
             debug_assert!(self.inner.get_unchecked(ptr).occupied);
-            &*self.inner.get_unchecked(ptr).data
+            &*self.inner.get_unchecked(ptr).data.as_ptr()
         }
 
         unsafe fn get_unchecked_mut(&mut self, ptr: &Self::Ptr) -> &mut T {
             debug_assert!(self.inner.get_unchecked(ptr).occupied);
-            &mut *self.inner.get_unchecked_mut(ptr).data
+            &mut *self.inner.get_unchecked_mut(ptr).data.as_mut_ptr()
         }
 
         unsafe fn remove_unchecked(&mut self, ptr: &Self::Ptr) -> T {
             let entry = self.inner.get_unchecked_mut(ptr);
             debug_assert!(entry.occupied);
 
-            let value = read(&*entry.data);
+            let value = read(entry.data.as_ptr());
             entry.occupied = false;
             entry.next = self.first_vacant.take();
 
@@ -482,14 +480,14 @@ pub mod pooled {
         fn get(&self, ptr: &Self::Ptr) -> Option<&T> {
             self.inner.get(ptr).map(|x| {
                 debug_assert!(x.occupied);
-                &*x.data
+                unsafe { &*x.data.as_ptr() }
             })
         }
 
         fn get_mut(&mut self, ptr: &Self::Ptr) -> Option<&mut T> {
             self.inner.get_mut(ptr).map(|x| {
                 debug_assert!(x.occupied);
-                &mut *x.data
+                unsafe { &mut *x.data.as_mut_ptr() }
             })
         }
 
@@ -497,7 +495,7 @@ pub mod pooled {
             if let Some(r) = self.inner.get_mut(ptr) {
                 debug_assert!(r.occupied);
 
-                let value = unsafe { read(&*r.data) };
+                let value = unsafe { read(r.data.as_ptr()) };
                 r.occupied = false;
                 r.next = self.first_vacant.take();
 

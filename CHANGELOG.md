@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 ## [Unreleased]
 
+- Get rid of illegal uses of `std::mem::uninitialized`, replacing them with `MaybeUninit`
+
 ## [0.2.6] - 2019-02-28
 
 - Add `Ring::dealloc_front_until` and `Ring::dealloc_back_until`
