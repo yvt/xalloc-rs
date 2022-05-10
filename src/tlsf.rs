@@ -88,7 +88,7 @@
 //!
 //! ```
 //! use xalloc::tlsf::TlsfBlock;
-//! use core::mem::size_of;
+//! use std::mem::size_of;
 //! assert!(size_of::<TlsfBlock<u32, u32>>() >= 25);
 //! assert!(size_of::<TlsfBlock<u32, u64>>() >= 41);
 //! assert!(size_of::<TlsfBlock<u64, u64>>() >= 49);
