@@ -6,8 +6,11 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
+#[cfg(not(feature = "std"))]
 use core::ops::Range;
 use int::BinaryUInteger;
+#[cfg(feature = "std")]
+use std::ops::Range;
 
 pub fn set_bits_ranged<T: BinaryUInteger + Copy>(map: &mut [T], range: Range<usize>) {
     let width = T::max_digits() as usize;
@@ -319,7 +322,10 @@ mod find_zeros_tests {
 
     struct BitField<'a, T: 'a>(&'a [T]);
 
+    #[cfg(not(feature = "std"))]
     use core::fmt;
+    #[cfg(feature = "std")]
+    use std::fmt;
     impl<'a, T: BinaryUInteger + Copy + 'a> fmt::Debug for BitField<'a, T> {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             write!(f, "BitField (")?;

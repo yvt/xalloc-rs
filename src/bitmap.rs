@@ -41,10 +41,20 @@
 //! ## Performance
 //!
 //! The allocation throughput is roughly the same as of jemalloc.
+#[cfg(not(feature = "std"))]
+use alloc::boxed::Box;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::vec;
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 use bitmaputils::*;
+#[cfg(not(feature = "std"))]
 use core::ops::Range;
 use int::BinaryInteger;
-
+#[cfg(feature = "std")]
+use std::ops::Range;
 /// Free space bitmap-based external memory allocator.
 ///
 /// See [the module-level documentation] for more.

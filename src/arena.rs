@@ -9,7 +9,19 @@
 //! Memory arena traits (used by [`Tlsf`]).
 //!
 //! [`Tlsf`]: crate::tlsf::Tlsf
+#[cfg(not(feature = "std"))]
 use core::fmt;
+#[cfg(feature = "std")]
+use std::fmt;
+
+#[cfg(not(feature = "std"))]
+use alloc::boxed::Box;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::vec;
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 
 /// Homogeneous memory arena types supporting operations that do not guarantee
 /// memory safety.
@@ -112,9 +124,19 @@ fn test_common<T: UnsafeArenaWithMembershipCheck<&'static str>>(arena: &mut T) {
 /// `UnsafeArena` implementation that relies on the system memory allocator.
 pub mod sys {
     use super::*;
+    #[cfg(not(feature = "std"))]
     use core::mem::{transmute, transmute_copy, ManuallyDrop};
+    #[cfg(not(feature = "std"))]
     use core::ptr::read;
+    #[cfg(not(feature = "std"))]
     use core::ptr::NonNull;
+
+    #[cfg(feature = "std")]
+    use std::mem::{transmute, transmute_copy, ManuallyDrop};
+    #[cfg(feature = "std")]
+    use std::ptr::read;
+    #[cfg(feature = "std")]
+    use std::ptr::NonNull;
 
     /// `UnsafeArena` implementation that relies on the system memory allocator.
     #[derive(Debug, Clone, Copy)]
@@ -200,11 +222,17 @@ pub mod sys {
 pub use self::sys::SysAllocator;
 
 /// Naïve memory-safe implementation of `Arena`.
-#[cfg(feature = "alloc")]
 pub mod checked {
     use super::*;
+    #[cfg(not(feature = "std"))]
     use alloc::collections::BTreeMap;
+    #[cfg(not(feature = "std"))]
     use alloc::sync::Arc;
+
+    #[cfg(feature = "std")]
+    use std::collections::BTreeMap;
+    #[cfg(feature = "std")]
+    use std::sync::Arc;
 
     /// Naïve memory-safe implementation of `Arena`.
     ///
@@ -335,9 +363,19 @@ pub use self::checked::CheckedArena;
 /// Adds a `Vec`-based pool to any memory arena for faster reallocation.
 pub mod pooled {
     use super::*;
+    #[cfg(not(feature = "std"))]
     use core::marker::PhantomData;
+    #[cfg(not(feature = "std"))]
     use core::mem::MaybeUninit;
+    #[cfg(not(feature = "std"))]
     use core::ptr::{drop_in_place, read};
+
+    #[cfg(feature = "std")]
+    use std::marker::PhantomData;
+    #[cfg(feature = "std")]
+    use std::mem::MaybeUninit;
+    #[cfg(feature = "std")]
+    use std::ptr::{drop_in_place, read};
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
     #[derive(Debug)]

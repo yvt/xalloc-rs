@@ -58,25 +58,23 @@
 // Clippy does not understand that generic numeric types are not always
 // as capable as built-in ones and raise false warnings
 #![cfg_attr(feature = "cargo-clippy", allow(clippy::op_ref))]
+#![cfg_attr(not(feature = "std"), no_std)]
 
-#[cfg(feature = "alloc")]
+#[cfg(not(feature = "std"))]
 extern crate alloc;
-extern crate core;
 pub extern crate num;
 extern crate unreachable;
 
-#[cfg(feature = "alloc")]
 pub mod arena;
 pub mod bitmap;
 mod bitmaputils;
 pub mod int;
 pub mod ring;
-#[cfg(feature = "alloc")]
 pub mod tlsf;
 
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
 pub use self::ring::{Ring, RingRegion};
-#[cfg(feature = "alloc")]
+
 pub use self::tlsf::{
     SafeTlsf, SafeTlsfRegion, SysTlsf, SysTlsfRegion, Tlsf, TlsfBlock, TlsfRegion,
 };

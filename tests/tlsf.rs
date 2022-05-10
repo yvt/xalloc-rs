@@ -6,6 +6,7 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
+#![cfg(feature = "std")]
 extern crate xalloc;
 
 use std::ops;

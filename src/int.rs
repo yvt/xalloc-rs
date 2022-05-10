@@ -7,8 +7,15 @@
 // according to those terms.
 //
 //! Traits for integral types.
+#[cfg(not(feature = "std"))]
 use core::mem::size_of;
+#[cfg(not(feature = "std"))]
 use core::{fmt, ops};
+#[cfg(feature = "std")]
+use std::mem::size_of;
+#[cfg(feature = "std")]
+use std::{fmt, ops};
+
 use num::Integer;
 
 /// Integral types with efficient binary operations.

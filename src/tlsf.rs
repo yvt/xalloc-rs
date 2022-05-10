@@ -97,7 +97,19 @@
 //! ## Performance
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
+#[cfg(not(feature = "std"))]
 use core::fmt;
+#[cfg(feature = "std")]
+use std::fmt;
+
+#[cfg(not(feature = "std"))]
+use alloc::boxed::Box;
+#[cfg(not(feature = "std"))]
+use alloc::string::String;
+#[cfg(not(feature = "std"))]
+use alloc::vec;
+#[cfg(not(feature = "std"))]
+use alloc::vec::Vec;
 use num::{One, Zero};
 use unreachable::{unreachable, UncheckedOptionExt};
 
@@ -524,7 +536,11 @@ where
         }
 
         let dump = || {
+            #[cfg(not(feature = "std"))]
             use core::fmt::Write;
+            #[cfg(feature = "std")]
+            use std::fmt::Write;
+
             let mut s = String::new();
             let mut cur_ptr = first_ptr.clone();
             loop {

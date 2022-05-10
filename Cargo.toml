@@ -11,9 +11,9 @@ Suballocators for external memory (e.g., Vulkan device memory)
 keywords = ["allocator", "vulkan", "memory", "suballocator", "tlsf"]
 
 [features]
-default = ["alloc"]
+default = ["std"]
 nightly = []
-alloc = []
+std = []
 
 [dependencies]
 num = ">= 0.2.0, < 0.4.0"
