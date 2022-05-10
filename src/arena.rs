@@ -16,12 +16,6 @@ use std::fmt;
 
 #[cfg(not(feature = "std"))]
 use alloc::boxed::Box;
-#[cfg(not(feature = "std"))]
-use alloc::string::String;
-#[cfg(not(feature = "std"))]
-use alloc::vec;
-#[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
 
 /// Homogeneous memory arena types supporting operations that do not guarantee
 /// memory safety.
@@ -224,7 +218,9 @@ pub use self::sys::SysAllocator;
 /// Naïve memory-safe implementation of `Arena`.
 pub mod checked {
     use super::*;
-    #[cfg(not(feature = "std"))]
+    #[cfg(all(not(feature = "std"), feature = "hashbrown"))]
+    use hashbrown::HashMap as MapType;
+    #[cfg(all(not(feature = "std"), not(feature = "hashbrown")))]
     use alloc::collections::BTreeMap as MapType;
     #[cfg(not(feature = "std"))]
     use alloc::sync::Arc;

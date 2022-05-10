@@ -63,6 +63,8 @@
 #[cfg(not(feature = "std"))]
 extern crate alloc;
 pub extern crate num;
+#[cfg(feature = "hashbrown")]
+pub extern crate hashbrown;
 extern crate unreachable;
 
 pub mod arena;
