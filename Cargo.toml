@@ -13,8 +13,8 @@ keywords = ["allocator", "vulkan", "memory", "suballocator", "tlsf"]
 [features]
 default = ["std"]
 nightly = []
-std = []
+std = ["num/std"]
 
 [dependencies]
-num = ">= 0.2.0, < 0.4.0"
+num = { version = ">= 0.2.0, < 0.4.0", default_features=false}
 unreachable = "1.0.0"
