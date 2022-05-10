@@ -225,12 +225,12 @@ pub use self::sys::SysAllocator;
 pub mod checked {
     use super::*;
     #[cfg(not(feature = "std"))]
-    use alloc::collections::BTreeMap;
+    use alloc::collections::BTreeMap as MapType;
     #[cfg(not(feature = "std"))]
     use alloc::sync::Arc;
 
     #[cfg(feature = "std")]
-    use std::collections::BTreeMap;
+    use std::collections::HashMap as MapType;
     #[cfg(feature = "std")]
     use std::sync::Arc;
 
@@ -239,7 +239,7 @@ pub mod checked {
     /// For a test purpose only. Do not use this in production. It is really slow.
     #[derive(Debug)]
     pub struct CheckedArena<T> {
-        map: BTreeMap<u64, T>,
+        map: MapType<u64, T>,
         id: Arc<()>,
         next_key: u64,
     }
@@ -252,7 +252,7 @@ pub mod checked {
         /// Construct a `CheckedArena`.
         pub fn new() -> Self {
             Self {
-                map: BTreeMap::new(),
+                map: MapType::new(),
                 id: Arc::new(()),
                 next_key: 0,
             }
