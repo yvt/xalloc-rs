@@ -11,7 +11,6 @@
 //! [`Tlsf`]: crate::tlsf::Tlsf
 use core::fmt;
 
-
 /// Homogeneous memory arena types supporting operations that do not guarantee
 /// memory safety.
 ///
@@ -201,7 +200,7 @@ pub mod sys {
 pub use self::sys::SysAllocator;
 
 /// Naïve memory-safe implementation of `Arena`.
-#[cfg(feature="alloc")]
+#[cfg(feature = "alloc")]
 pub mod checked {
     use super::*;
     use alloc::collections::BTreeMap;

@@ -7,9 +7,9 @@
 // according to those terms.
 //
 //! Traits for integral types.
-use num::Integer;
 use core::mem::size_of;
 use core::{fmt, ops};
+use num::Integer;
 
 /// Integral types with efficient binary operations.
 pub trait BinaryInteger:

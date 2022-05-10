@@ -97,8 +97,8 @@
 //! ## Performance
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
-use num::{One, Zero};
 use core::fmt;
+use num::{One, Zero};
 use unreachable::{unreachable, UncheckedOptionExt};
 
 use arena::{SafeArena, UnsafeArena, UnsafeArenaWithMembershipCheck};

@@ -42,8 +42,8 @@
 //!
 //! The allocation throughput is roughly the same as of jemalloc.
 use bitmaputils::*;
-use int::BinaryInteger;
 use core::ops::Range;
+use int::BinaryInteger;
 
 /// Free space bitmap-based external memory allocator.
 ///

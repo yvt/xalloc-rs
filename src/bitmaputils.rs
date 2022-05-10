@@ -6,8 +6,8 @@
 // not be copied, modified,or distributed except
 // according to those terms.
 //
-use int::BinaryUInteger;
 use core::ops::Range;
+use int::BinaryUInteger;
 
 pub fn set_bits_ranged<T: BinaryUInteger + Copy>(map: &mut [T], range: Range<usize>) {
     let width = T::max_digits() as usize;
