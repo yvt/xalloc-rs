@@ -88,7 +88,7 @@
 //!
 //! ```
 //! use xalloc::tlsf::TlsfBlock;
-//! use std::mem::size_of;
+//! use core::mem::size_of;
 //! assert!(size_of::<TlsfBlock<u32, u32>>() >= 25);
 //! assert!(size_of::<TlsfBlock<u32, u64>>() >= 41);
 //! assert!(size_of::<TlsfBlock<u64, u64>>() >= 49);
@@ -98,7 +98,7 @@
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
 use num::{One, Zero};
-use std::fmt;
+use core::fmt;
 use unreachable::{unreachable, UncheckedOptionExt};
 
 use arena::{SafeArena, UnsafeArena, UnsafeArenaWithMembershipCheck};
@@ -524,7 +524,7 @@ where
         }
 
         let dump = || {
-            use std::fmt::Write;
+            use core::fmt::Write;
             let mut s = String::new();
             let mut cur_ptr = first_ptr.clone();
             loop {

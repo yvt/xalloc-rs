@@ -61,16 +61,22 @@
 
 pub extern crate num;
 extern crate unreachable;
+extern crate core;
+#[cfg(feature="alloc")]
+extern crate alloc;
 
+#[cfg(feature="alloc")]
 pub mod arena;
 pub mod bitmap;
 mod bitmaputils;
 pub mod int;
 pub mod ring;
+#[cfg(feature="alloc")]
 pub mod tlsf;
 
 pub use self::bitmap::{BitmapAlloc, BitmapAllocRegion};
 pub use self::ring::{Ring, RingRegion};
+#[cfg(feature="alloc")]
 pub use self::tlsf::{
     SafeTlsf, SafeTlsfRegion, SysTlsf, SysTlsfRegion, Tlsf, TlsfBlock, TlsfRegion,
 };

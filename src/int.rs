@@ -8,8 +8,8 @@
 //
 //! Traits for integral types.
 use num::Integer;
-use std::mem::size_of;
-use std::{fmt, ops};
+use core::mem::size_of;
+use core::{fmt, ops};
 
 /// Integral types with efficient binary operations.
 pub trait BinaryInteger:

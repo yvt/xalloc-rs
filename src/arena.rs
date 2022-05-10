@@ -9,7 +9,8 @@
 //! Memory arena traits (used by [`Tlsf`]).
 //!
 //! [`Tlsf`]: crate::tlsf::Tlsf
-use std::fmt;
+use core::fmt;
+
 
 /// Homogeneous memory arena types supporting operations that do not guarantee
 /// memory safety.
@@ -112,10 +113,9 @@ fn test_common<T: UnsafeArenaWithMembershipCheck<&'static str>>(arena: &mut T) {
 /// `UnsafeArena` implementation that relies on the system memory allocator.
 pub mod sys {
     use super::*;
-    use std::mem::{transmute, transmute_copy, ManuallyDrop};
-    use std::ptr::read;
-
-    use std::ptr::NonNull;
+    use core::mem::{transmute, transmute_copy, ManuallyDrop};
+    use core::ptr::read;
+    use core::ptr::NonNull;
 
     /// `UnsafeArena` implementation that relies on the system memory allocator.
     #[derive(Debug, Clone, Copy)]
@@ -201,17 +201,18 @@ pub mod sys {
 pub use self::sys::SysAllocator;
 
 /// Naïve memory-safe implementation of `Arena`.
+#[cfg(feature="alloc")]
 pub mod checked {
     use super::*;
-    use std::collections::HashMap;
-    use std::sync::Arc;
+    use alloc::collections::BTreeMap;
+    use alloc::sync::Arc;
 
     /// Naïve memory-safe implementation of `Arena`.
     ///
     /// For a test purpose only. Do not use this in production. It is really slow.
     #[derive(Debug)]
     pub struct CheckedArena<T> {
-        map: HashMap<u64, T>,
+        map: BTreeMap<u64, T>,
         id: Arc<()>,
         next_key: u64,
     }
@@ -224,7 +225,7 @@ pub mod checked {
         /// Construct a `CheckedArena`.
         pub fn new() -> Self {
             Self {
-                map: HashMap::new(),
+                map: BTreeMap::new(),
                 id: Arc::new(()),
                 next_key: 0,
             }
@@ -335,9 +336,9 @@ pub use self::checked::CheckedArena;
 /// Adds a `Vec`-based pool to any memory arena for faster reallocation.
 pub mod pooled {
     use super::*;
-    use std::marker::PhantomData;
-    use std::mem::MaybeUninit;
-    use std::ptr::{drop_in_place, read};
+    use core::marker::PhantomData;
+    use core::mem::MaybeUninit;
+    use core::ptr::{drop_in_place, read};
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
     #[derive(Debug)]
