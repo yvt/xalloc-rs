@@ -218,9 +218,7 @@ pub use self::sys::SysAllocator;
 /// Naïve memory-safe implementation of `Arena`.
 pub mod checked {
     use super::*;
-    #[cfg(all(not(feature = "std"), feature = "hashbrown"))]
-    use hashbrown::HashMap as MapType;
-    #[cfg(all(not(feature = "std"), not(feature = "hashbrown")))]
+    #[cfg(not(feature = "std"))]
     use alloc::collections::BTreeMap as MapType;
     #[cfg(not(feature = "std"))]
     use alloc::sync::Arc;

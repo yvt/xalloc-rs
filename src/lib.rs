@@ -52,6 +52,7 @@
 //! - `nightly` — Enables optimizations which currently require a Nightly Rust
 //!   compiler. This flag is now unused due to the [stabilization] of `NonNull`
 //!   in Rust 1.25.
+//! - `std` — Enables the use of the standard library. Enabled by default.
 //!
 //! [stabilization]: https://blog.rust-lang.org/2018/03/29/Rust-1.25.html
 //!
@@ -64,8 +65,6 @@ extern crate std;
 
 extern crate alloc;
 pub extern crate num;
-#[cfg(feature = "hashbrown")]
-pub extern crate hashbrown;
 extern crate unreachable;
 
 pub mod arena;

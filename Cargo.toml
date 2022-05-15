@@ -14,9 +14,7 @@ keywords = ["allocator", "vulkan", "memory", "suballocator", "tlsf"]
 default = ["std"]
 nightly = []
 std = ["num/std"]
-hashbrown = [ "dep:hashbrown" ]
 
 [dependencies]
 num = { version = ">= 0.2.0, < 0.4.0", default_features = false }
 unreachable = "1.0.0"
-hashbrown = { version = "0.12", optional = true }
