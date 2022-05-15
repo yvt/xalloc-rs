@@ -58,7 +58,9 @@
 // Clippy does not understand that generic numeric types are not always
 // as capable as built-in ones and raise false warnings
 #![cfg_attr(feature = "cargo-clippy", allow(clippy::op_ref))]
-#![cfg_attr(not(feature = "std"), no_std)]
+#![no_std]
+#[cfg(feature = "std")]
+extern crate std;
 
 extern crate alloc;
 pub extern crate num;
