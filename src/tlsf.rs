@@ -97,10 +97,7 @@
 //! ## Performance
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
-#[cfg(not(feature = "std"))]
 use core::fmt;
-#[cfg(feature = "std")]
-use std::fmt;
 
 #[cfg(not(feature = "std"))]
 use alloc::boxed::Box;
