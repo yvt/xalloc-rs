@@ -203,12 +203,8 @@ pub use self::sys::SysAllocator;
 /// Naïve memory-safe implementation of `Arena`.
 pub mod checked {
     use super::*;
-    #[cfg(not(feature = "std"))]
     use alloc::collections::BTreeMap as MapType;
     use alloc::sync::Arc;
-
-    #[cfg(feature = "std")]
-    use std::collections::HashMap as MapType;
     /// Naïve memory-safe implementation of `Arena`.
     ///
     /// For a test purpose only. Do not use this in production. It is really slow.
