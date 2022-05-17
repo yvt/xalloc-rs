@@ -533,10 +533,7 @@ where
         }
 
         let dump = || {
-            #[cfg(not(feature = "std"))]
             use core::fmt::Write;
-            #[cfg(feature = "std")]
-            use std::fmt::Write;
 
             let mut s = String::new();
             let mut cur_ptr = first_ptr.clone();
