@@ -357,19 +357,9 @@ pub use self::checked::CheckedArena;
 /// Adds a `Vec`-based pool to any memory arena for faster reallocation.
 pub mod pooled {
     use super::*;
-    #[cfg(not(feature = "std"))]
     use core::marker::PhantomData;
-    #[cfg(not(feature = "std"))]
     use core::mem::MaybeUninit;
-    #[cfg(not(feature = "std"))]
     use core::ptr::{drop_in_place, read};
-
-    #[cfg(feature = "std")]
-    use std::marker::PhantomData;
-    #[cfg(feature = "std")]
-    use std::mem::MaybeUninit;
-    #[cfg(feature = "std")]
-    use std::ptr::{drop_in_place, read};
 
     /// Adds a vacant entry pool to any memory arena for faster reallocation.
     #[derive(Debug)]
