@@ -99,14 +99,7 @@
 //! The allocation throughput is mostly equivalent to that of jemalloc.
 use core::fmt;
 
-#[cfg(not(feature = "std"))]
-use alloc::boxed::Box;
-#[cfg(not(feature = "std"))]
-use alloc::string::String;
-#[cfg(not(feature = "std"))]
-use alloc::vec;
-#[cfg(not(feature = "std"))]
-use alloc::vec::Vec;
+use alloc::{boxed::Box, string::String, vec, vec::Vec};
 use num::{One, Zero};
 use unreachable::{unreachable, UncheckedOptionExt};
 
