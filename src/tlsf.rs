@@ -97,8 +97,10 @@
 //! ## Performance
 //!
 //! The allocation throughput is mostly equivalent to that of jemalloc.
+use core::fmt;
+
+use alloc::{boxed::Box, string::String, vec, vec::Vec};
 use num::{One, Zero};
-use std::fmt;
 use unreachable::{unreachable, UncheckedOptionExt};
 
 use arena::{SafeArena, UnsafeArena, UnsafeArenaWithMembershipCheck};
@@ -524,7 +526,8 @@ where
         }
 
         let dump = || {
-            use std::fmt::Write;
+            use core::fmt::Write;
+
             let mut s = String::new();
             let mut cur_ptr = first_ptr.clone();
             loop {

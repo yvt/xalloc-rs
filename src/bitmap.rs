@@ -41,10 +41,13 @@
 //! ## Performance
 //!
 //! The allocation throughput is roughly the same as of jemalloc.
+use alloc::boxed::Box;
+use alloc::string::String;
+use alloc::vec;
+use alloc::vec::Vec;
 use bitmaputils::*;
+use core::ops::Range;
 use int::BinaryInteger;
-use std::ops::Range;
-
 /// Free space bitmap-based external memory allocator.
 ///
 /// See [the module-level documentation] for more.
