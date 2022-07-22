@@ -354,9 +354,9 @@ where
         assert_ne!(size, Zero::zero());
 
         let suitable = unsafe { self.l1.search_suitable(&mut self.blocks, &size, align_bits) };
-        suitable.map(|(position, free_block_ptr, pad)| unsafe {
+        suitable.map(|(position, free_block_ptr, pad)| {
             let (mut prev, mut next, free_block_address, free_block_size) = {
-                let block = self.blocks.get_unchecked(&free_block_ptr);
+                let block = unsafe { self.blocks.get_unchecked(&free_block_ptr) };
                 (
                     block.prev.clone(),
                     block.next.clone(),
@@ -376,10 +376,11 @@ where
             }
             self.blocks.reserve(reserve);
 
-            self.l1
+            unsafe {
+                self.l1
                 .unlink_head(&mut self.blocks, free_block_ptr.clone(), position);
-            self.blocks.remove_unchecked(&free_block_ptr);
-
+                self.blocks.remove_unchecked(&free_block_ptr);
+            }
             if pad != Zero::zero() {
                 let block = TlsfBlock {
                     prev: prev.clone(),
@@ -389,9 +390,9 @@ where
                     state: TlsfBlockState::Used, // don't care
                 };
                 let block_ptr = self.blocks.insert(block);
-                self.l1.link(&mut self.blocks, block_ptr.clone());
+                unsafe { self.l1.link(&mut self.blocks, block_ptr.clone()) };
                 if let Some(ref old_prev) = prev {
-                    self.blocks.get_unchecked_mut(old_prev).next = Some(block_ptr.clone());
+                    unsafe { self.blocks.get_unchecked_mut(old_prev).next = Some(block_ptr.clone()) };
                 }
                 prev = Some(block_ptr);
             }
@@ -405,9 +406,9 @@ where
                     state: TlsfBlockState::Used, // don't care
                 };
                 let block_ptr = self.blocks.insert(block);
-                self.l1.link(&mut self.blocks, block_ptr.clone());
+                unsafe { self.l1.link(&mut self.blocks, block_ptr.clone()) };
                 if let Some(ref old_next) = next {
-                    self.blocks.get_unchecked_mut(old_next).prev = Some(block_ptr.clone());
+                    unsafe { self.blocks.get_unchecked_mut(old_next).prev = Some(block_ptr.clone()) };
                 }
                 next = Some(block_ptr);
             }
@@ -424,13 +425,13 @@ where
             };
 
             // Connect neighboring blocks to this
-            let address = self.blocks.get_unchecked(&main_ptr).address.clone();
+            let address = unsafe { self.blocks.get_unchecked(&main_ptr).address.clone() };
 
             if let Some(ptr) = prev {
-                self.blocks.get_unchecked_mut(&ptr).next = Some(main_ptr.clone());
+                unsafe { self.blocks.get_unchecked_mut(&ptr).next = Some(main_ptr.clone()) };
             }
             if let Some(ptr) = next {
-                self.blocks.get_unchecked_mut(&ptr).prev = Some(main_ptr.clone());
+                unsafe { self.blocks.get_unchecked_mut(&ptr).prev = Some(main_ptr.clone()) };
             }
 
             (TlsfRegion(main_ptr), address)
